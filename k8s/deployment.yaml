@@ -1,0 +1,37 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlops-assignment
+  labels:
+    app: mlops-assignment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mlops-assignment
+  template:
+    metadata:
+      labels:
+        app: mlops-assignment
+    spec:
+      containers:
+      - name: mlops-app
+        image: vaibhuvverma/mlops-assignment:g24ai2107
+        ports:
+        - containerPort: 5000
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "1"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mlops-service
+spec:
+  selector:
+    app: mlops-assignment
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+  type: LoadBalancer
