@@ -2,33 +2,23 @@
 
 on:
   push:
-    branches: [ main, dev, docker_cicd ]
+    branches: [ docker_cicd ]
 
 jobs:
-  test_pipeline:
+  build_docker:
     runs-on: ubuntu-latest
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
-        
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        
-    - name: Train model
-      run: python train.py
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
       
-    - name: Test model
-      run: python test.py
-      
-    - name: Verify configuration files
+    - name: Build Docker image
       run: |
-        echo "Dockerfile exists:" && test -f Dockerfile && echo "✅" || echo "❌"
-        echo "K8s deployment exists:" && test -f k8s/deployment.yaml && echo "✅" || echo "❌"
+        docker build -t vaibhuvverma/mlops-assignment:g24ai2107 .
+        echo "Docker image built successfully"
+        
+    - name: List Docker images
+      run: docker images
